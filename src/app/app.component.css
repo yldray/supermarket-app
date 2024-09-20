@@ -1,0 +1,22 @@
+.container {
+    padding: 20px;
+    background-color: #121212; /* Mat siyah arka plan */
+    color: white; /* Yazı rengi beyaz */
+  }
+  
+  .market-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+  }
+  
+  .market-card {
+    background-color: #1e1e1e; /* Market kartı arka plan rengi */
+    padding: 20px;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+    width: calc(50% - 20px); /* İki market yan yana olacak şekilde genişlik */
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5); /* Gölgelendirme */
+  }
+  
+  

@@ -1,37 +1,55 @@
 .container {
-    padding: 20px;
-  }
-  
-  .market-list {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 20px;
-  }
-  
-  .market-card {
-    background-color: #f8f9fa;
-    padding: 20px;
-    border-radius: 8px;
-    border: 1px solid #ddd;
-    width: 100%;
-  }
-  
-  table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-bottom: 20px;
-  }
-  
-  table, th, td {
-    border: 1px solid #ddd;
-  }
-  
-  th, td {
-    padding: 8px;
-    text-align: left;
-  }
-  
-  button {
-    margin-top: 10px;
-  }
-  
+  padding: 20px;
+  background-color: #121212; /* Mat siyah arka plan */
+  color: white; /* Yazı rengi beyaz */
+}
+
+.market-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.market-card {
+  background-color: #1e1e1e; /* Market kartı arka plan rengi */
+  padding: 20px;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+  width: calc(50% - 20px); /* İki market yan yana olacak şekilde genişlik */
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5); /* Gölgelendirme */
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 20px;
+}
+
+table, th, td {
+  border: 1px solid #ddd;
+}
+
+th, td {
+  padding: 8px;
+  text-align: left;
+  color: white; /* Tablo yazı rengi beyaz */
+  background-color: #2c2c2c; /* Tablo hücre arka plan rengi */
+}
+
+th {
+  background-color: #3c3c3c; /* Başlık hücre arka plan rengi */
+}
+
+button {
+  margin-top: 10px;
+  background-color: #007bff; /* Buton arka plan rengi */
+  color: white; /* Buton yazı rengi beyaz */
+  border: none; /* Sınır yok */
+  padding: 10px 15px; /* İç boşluk */
+  border-radius: 5px; /* Köşeleri yuvarlama */
+  cursor: pointer; /* İmleç işareti */
+}
+
+button:hover {
+  background-color: #0056b3; /* Hover durumunda buton rengi */
+}
