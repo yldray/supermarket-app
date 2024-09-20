@@ -1,0 +1,27 @@
+<div class="market-list">
+    <div class="market-card" *ngFor="let market of filteredMarkets">
+      <h2>{{ market.name }}</h2>
+      
+      <table>
+        <thead>
+          <tr>
+            <th>Reyon</th>
+            <th>Tür</th>
+            <th>Ürünler</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let section of market.sections">
+            <td>{{ section.id }}</td>
+            <td>{{ section.type }}</td>
+            <td>
+              <span *ngFor="let product of section.products">{{ product }} </span>
+            </td>
+            <td><button class="btn btn-primary">Ürün Ekle</button></td>
+          </tr>
+        </tbody>
+      </table>
+      <button class="btn btn-secondary">Reyon Ekle</button>
+    </div>
+  </div>
+  

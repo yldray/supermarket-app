@@ -1,0 +1,5 @@
+<div class="container">
+  <app-navbar (searchTerm)="onSearch($event)"></app-navbar>  <!-- NavBar'dan arama terimi alınır -->
+  
+  <app-markets [searchQuery]="searchQuery"></app-markets> <!-- Arama terimi MarketsComponent'e iletilir -->
+</div>

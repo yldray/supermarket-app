@@ -1,0 +1,19 @@
+<nav class="navbar">
+    <!-- Sol kısım: Logo ve Başlık -->
+    <div class="logo">
+      <img src="assets/logo.png" alt="Supermarket Logo">
+    </div>
+  
+    <!-- Orta kısım: Döviz Kurları -->
+    <div class="exchange-rates">
+      <span>$ {{ exchangeRates.TRY | number: '1.4-4' }}</span>
+      <span>£ {{ exchangeRates.GBP | number: '1.4-4' }}</span>
+      <span>€ {{ exchangeRates.EUR | number: '1.4-4' }}</span>
+    </div>
+  
+    <!-- Sağ kısım: Ürün Arama -->
+    <div class="search">
+      <input type="text" placeholder="Ürün Ara" (input)="onSearch($event)">
+    </div>
+  </nav>
+  

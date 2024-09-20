@@ -1,0 +1,21 @@
+.container {
+    padding: 20px;
+  }
+  
+  .product-list {
+    display: flex;
+    gap: 20px;
+  }
+  
+  .product-card {
+    background-color: #f1f1f1;
+    padding: 15px;
+    border-radius: 8px;
+    width: 200px;
+  }
+  
+  .btn {
+    margin-top: 10px;
+    width: 100%;
+  }
+  
