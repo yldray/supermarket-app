@@ -185,16 +185,33 @@ export class MarketsComponent implements OnChanges {
         cancelButton: 'swal2-cancel-button'
       },
       didOpen: () => {
-        // Seçilen marketi ve mevcut reyon sayısını belirledikten sonra reyon adını belirliyoruz
         const marketSelect = document.getElementById('marketSelect') as HTMLSelectElement;
         const sectionIdInput = document.getElementById('sectionId') as HTMLInputElement;
   
+        // İlk marketi otomatik olarak seçili yap
+        if (markets.length > 0) {
+          marketSelect.value = markets[0].name;  // İlk marketi seçiyoruz
+          const selectedMarket = markets[0];  // İlk marketi alıyoruz
+  
+          // Otomatik reyon ismi (R1, R2, R3...)
+          const existingSectionNumbers = selectedMarket.sections
+            .map(section => parseInt(section.id.replace('R', ''), 10))
+            .filter(n => !isNaN(n));
+          const nextSectionNumber = existingSectionNumbers.length > 0
+            ? Math.max(...existingSectionNumbers) + 1
+            : 1;
+          const sectionId = `R${nextSectionNumber}`;
+  
+          // Reyon adı input alanına otomatik olarak doldur
+          sectionIdInput.value = sectionId;
+        }
+  
+        // Seçimi değiştirdiğinizde reyon adını güncelleyen olay
         marketSelect.addEventListener('change', () => {
           const marketName = marketSelect.value;
           const selectedMarket = markets.find(market => market.name === marketName);
   
           if (selectedMarket) {
-            // Otomatik reyon ismi (R1, R2, R3...)
             const existingSectionNumbers = selectedMarket.sections
               .map(section => parseInt(section.id.replace('R', ''), 10))
               .filter(n => !isNaN(n));
@@ -203,7 +220,7 @@ export class MarketsComponent implements OnChanges {
               : 1;
             const sectionId = `R${nextSectionNumber}`;
   
-            // Reyon adı input alanına otomatik olarak doldurulur
+            // Reyon adı input alanına otomatik olarak doldur
             sectionIdInput.value = sectionId;
           }
         });
@@ -248,5 +265,6 @@ export class MarketsComponent implements OnChanges {
       }
     });
   }
+  
   
 }
