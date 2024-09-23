@@ -144,9 +144,6 @@ export class MarketsComponent implements OnChanges {
       }
     });
   }
-  
-  
-  
   showAddSectionModal(markets: Market[]) {
     // Get unique section types from all markets
     const sectionTypes = [...new Set(markets.flatMap(market => market.sections.map(section => section.type)))];
@@ -161,11 +158,12 @@ export class MarketsComponent implements OnChanges {
         <div style="display: flex; flex-direction: column; gap: 15px; width: 100%;">
           <div style="width: 100%;">
             <label for="sectionId" style="display: block; font-weight: 500; color: #ccc; margin-bottom: 5px;">Reyon Adı</label>
-            <input id="sectionId" placeholder="Reyon Adı" type="text" style="width: 100%; padding: 10px; font-size: 14px; color: white; background-color: #1a1a1a; border: 1px solid #333; border-radius: 5px;">
+            <input id="sectionId" readonly type="text" placeholder="Reyon Adı" style="width: 100%; padding: 10px; font-size: 14px; color: white; background-color: #1a1a1a; border: 1px solid #333; border-radius: 5px;">
           </div>
           <div style="width: 100%;">
             <label for="sectionType" style="display: block; font-weight: 500; color: #ccc; margin-bottom: 5px;">Reyon Türü</label>
             <select id="sectionType" style="width: 100%; padding: 10px; font-size: 14px; color: white; background-color: #1a1a1a; border: 1px solid #333; border-radius: 5px;">
+              <option value="" disabled selected>Reyon Türü Seçin</option>
               ${sectionTypeOptions}
             </select>
           </div>
@@ -186,6 +184,30 @@ export class MarketsComponent implements OnChanges {
         confirmButton: 'swal2-confirm-button',
         cancelButton: 'swal2-cancel-button'
       },
+      didOpen: () => {
+        // Seçilen marketi ve mevcut reyon sayısını belirledikten sonra reyon adını belirliyoruz
+        const marketSelect = document.getElementById('marketSelect') as HTMLSelectElement;
+        const sectionIdInput = document.getElementById('sectionId') as HTMLInputElement;
+  
+        marketSelect.addEventListener('change', () => {
+          const marketName = marketSelect.value;
+          const selectedMarket = markets.find(market => market.name === marketName);
+  
+          if (selectedMarket) {
+            // Otomatik reyon ismi (R1, R2, R3...)
+            const existingSectionNumbers = selectedMarket.sections
+              .map(section => parseInt(section.id.replace('R', ''), 10))
+              .filter(n => !isNaN(n));
+            const nextSectionNumber = existingSectionNumbers.length > 0
+              ? Math.max(...existingSectionNumbers) + 1
+              : 1;
+            const sectionId = `R${nextSectionNumber}`;
+  
+            // Reyon adı input alanına otomatik olarak doldurulur
+            sectionIdInput.value = sectionId;
+          }
+        });
+      },
       preConfirm: () => {
         const sectionId = (document.getElementById('sectionId') as HTMLInputElement).value;
         const sectionType = (document.getElementById('sectionType') as HTMLSelectElement).value;
@@ -203,21 +225,21 @@ export class MarketsComponent implements OnChanges {
       if (result.isConfirmed) {
         const { sectionId, sectionType, marketName } = result.value;
   
-        // Find the selected market by name
+        // Seçilen marketin ismi ile marketi bul
         const selectedMarket = markets.find(market => market.name === marketName);
         if (selectedMarket) {
-          // Add the new section to the selected market
+          // Yeni reyonu ekle
           const newSection = {
             id: sectionId,
             type: sectionType,
             products: []
           };
   
-          // Add the section
+          // Yeni reyonu markete ekle
           selectedMarket.sections.push(newSection);
   
-          // Update the reference to the markets array to trigger change detection
-          this.markets = [...markets]; // Ensure change detection is triggered
+          // Change detection'ın tetiklenmesi için markets array'ini güncelle
+          this.markets = [...markets];
   
           Swal.fire('Başarılı!', 'Reyon başarıyla eklendi.', 'success');
         } else {
@@ -226,9 +248,5 @@ export class MarketsComponent implements OnChanges {
       }
     });
   }
-  
-  
-  
-  
   
 }
