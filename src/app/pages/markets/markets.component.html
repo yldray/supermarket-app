@@ -1,3 +1,5 @@
+<!-- Navbar Component to emit search term -->
+
 <div class="market-list">
   <div class="market-card" *ngFor="let market of filteredMarkets">
     <h2>{{ market.name }}</h2>
@@ -16,7 +18,7 @@
           <td>{{ section.id }}</td>
           <td>{{ section.type }}</td>
           <td>
-            <span *ngFor="let product of section.products">{{ product.id }} - {{ product.name }} </span>
+            <span *ngFor="let product of section.products">{{ product.name }} </span>
           </td>
           <td>
             <button class="btn btn-primary" (click)="showAddProductModal(market.sections)">Ürün Ekle</button>
@@ -24,6 +26,7 @@
         </tr>
       </tbody>
     </table>
-    <button class="btn btn-secondary" (click)="showAddSectionModal(market)">Reyon Ekle</button>
+
+    <button class="btn btn-secondary" (click)="showAddSectionModal(filteredMarkets)">Reyon Ekle</button>
   </div>
 </div>

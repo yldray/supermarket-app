@@ -55,6 +55,19 @@ export class MarketsComponent implements OnChanges {
       };
     }).filter(market => market.sections.length > 0);  // Boş reyonları gizle
   }
+  onSearchTermChanged(searchTerm: string) {
+    this.filteredMarkets = this.markets.map(market => {
+      const filteredSections = market.sections.map(section => ({
+        ...section,
+        products: section.products.filter(product => product.name.toLowerCase().includes(searchTerm.toLowerCase()))
+      })).filter(section => section.products.length > 0);  // Filter out empty sections
+
+      return {
+        ...market,
+        sections: filteredSections
+      };
+    }).filter(market => market.sections.length > 0);  // Filter out markets with no sections
+  }
   // Eşsiz section (reyon) türlerini döndür
   getUniqueSectionTypes() {
     const typesSet = new Set<string>();
@@ -134,65 +147,88 @@ export class MarketsComponent implements OnChanges {
   
   
   
-  showAddSectionModal(market: Market) {
-    // Gather unique section types from the provided market (or all markets if needed)
-    const sectionTypes = [...new Set(market.sections.map((section: Section) => section.type))];
-  
-    // Create options for section types
+  showAddSectionModal(markets: Market[]) {
+    // Get unique section types from all markets
+    const sectionTypes = [...new Set(markets.flatMap(market => market.sections.map(section => section.type)))];
     const sectionTypeOptions = sectionTypes.map(type => `<option value="${type}">${type}</option>`).join('');
   
-    // Create option for market name (since the market is fixed)
-    const marketOption = `<option value="${market.name}">${market.name}</option>`;
+    // Get the list of available markets
+    const marketOptions = markets.map(market => `<option value="${market.name}">${market.name}</option>`).join('');
   
     Swal.fire({
-      title: 'Reyon Ekle',
+      title: '<h2 style="color: white;">Reyon Ekle</h2>',
       html: `
-        <div style="display: flex; flex-direction: column; gap: 10px;">
-          <div>
-            <label for="sectionId" style="display: block; font-weight: 500;">Reyon Adı</label>
-            <input id="sectionId" class="swal2-input" placeholder="Reyon Adı" type="text" style="width: 100%;">
+        <div style="display: flex; flex-direction: column; gap: 15px; width: 100%;">
+          <div style="width: 100%;">
+            <label for="sectionId" style="display: block; font-weight: 500; color: #ccc; margin-bottom: 5px;">Reyon Adı</label>
+            <input id="sectionId" placeholder="Reyon Adı" type="text" style="width: 100%; padding: 10px; font-size: 14px; color: white; background-color: #1a1a1a; border: 1px solid #333; border-radius: 5px;">
           </div>
-          <div>
-            <label for="sectionType" style="display: block; font-weight: 500;">Reyon Türü</label>
-            <select id="sectionType" class="swal2-input" style="width: 100%;">
+          <div style="width: 100%;">
+            <label for="sectionType" style="display: block; font-weight: 500; color: #ccc; margin-bottom: 5px;">Reyon Türü</label>
+            <select id="sectionType" style="width: 100%; padding: 10px; font-size: 14px; color: white; background-color: #1a1a1a; border: 1px solid #333; border-radius: 5px;">
               ${sectionTypeOptions}
             </select>
           </div>
-          <div>
-            <label for="marketSelect" style="display: block; font-weight: 500;">Market</label>
-            <select id="marketSelect" class="swal2-input" style="width: 100%;" disabled>
-              ${marketOption}
+          <div style="width: 100%;">
+            <label for="marketSelect" style="display: block; font-weight: 500; color: #ccc; margin-bottom: 5px;">Eklenecek Market</label>
+            <select id="marketSelect" style="width: 100%; padding: 10px; font-size: 14px; color: white; background-color: #1a1a1a; border: 1px solid #333; border-radius: 5px;">
+              ${marketOptions}
             </select>
           </div>
         </div>
       `,
+      background: '#121212',
+      width: '400px',
       showCancelButton: true,
       confirmButtonText: 'Ekle',
       cancelButtonText: 'İptal',
+      customClass: {
+        confirmButton: 'swal2-confirm-button',
+        cancelButton: 'swal2-cancel-button'
+      },
       preConfirm: () => {
         const sectionId = (document.getElementById('sectionId') as HTMLInputElement).value;
         const sectionType = (document.getElementById('sectionType') as HTMLSelectElement).value;
+        const marketName = (document.getElementById('marketSelect') as HTMLSelectElement).value;
   
-        if (!sectionId || !sectionType) {
+        // Validate that all fields are filled
+        if (!sectionId || !sectionType || !marketName) {
           Swal.showValidationMessage(`Lütfen tüm alanları doldurun!`);
           return false;
         }
   
-        return { sectionId, sectionType };
+        return { sectionId, sectionType, marketName };
       }
     }).then((result) => {
       if (result.isConfirmed) {
-        const { sectionId, sectionType } = result.value;
+        const { sectionId, sectionType, marketName } = result.value;
   
-        // Add the new section to the selected market
-        const newSection = {
-          id: sectionId,
-          type: sectionType,
-          products: []
-        };
-        market.sections.push(newSection);
-        Swal.fire('Başarılı!', 'Reyon başarıyla eklendi.', 'success');
+        // Find the selected market by name
+        const selectedMarket = markets.find(market => market.name === marketName);
+        if (selectedMarket) {
+          // Add the new section to the selected market
+          const newSection = {
+            id: sectionId,
+            type: sectionType,
+            products: []
+          };
+  
+          // Add the section
+          selectedMarket.sections.push(newSection);
+  
+          // Update the reference to the markets array to trigger change detection
+          this.markets = [...markets]; // Ensure change detection is triggered
+  
+          Swal.fire('Başarılı!', 'Reyon başarıyla eklendi.', 'success');
+        } else {
+          Swal.fire('Hata', 'Seçilen market bulunamadı.', 'error');
+        }
       }
     });
   }
+  
+  
+  
+  
+  
 }
