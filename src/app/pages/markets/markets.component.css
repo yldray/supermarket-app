@@ -16,6 +16,7 @@ body {
   border: 1px solid #333; /* Sınır rengi */
   width: calc(50% - 10px); /* Her kart %50 genişliğinde */
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5); /* Gölgelendirme */
+  margin-bottom: 20px; /* Kartlar arasında boşluk */
 }
 
 table {
@@ -32,10 +33,55 @@ th, td {
   padding: 8px; /* Hücre iç boşlukları */
   text-align: left; /* Soldan hizala */
   color: white; /* Tablo yazı rengi beyaz */
-  background-color: #2c2c2c; /* Hücre arka plan rengi */
 }
 
 th {
   background-color: #3c3c3c; /* Başlık hücre arka plan rengi */
 }
 
+td {
+  background-color: #2c2c2c; /* Hücre arka plan rengi */
+}
+
+.product-label {
+  display: inline-block;
+  background-color: #ffa500; /* Ürünlerin arka planı turuncu */
+  color: black; /* Ürün ismi siyah */
+  padding: 4px 8px;
+  margin-right: 5px;
+  border-radius: 4px;
+}
+
+.btn-primary {
+  background-color: #6a5acd; /* Ürün Ekle butonu mavi tonları */
+  color: white;
+  border: none;
+  padding: 8px 12px;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: background-color 0.3s ease;
+}
+
+.btn-primary:hover {
+  background-color: #5a4dbb; /* Hover rengi */
+}
+
+.btn-secondary {
+  background-color: #ffa500; /* Reyon Ekle butonu turuncu */
+  color: black;
+  border: none;
+  padding: 8px 12px;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: background-color 0.3s ease;
+}
+
+.btn-secondary:hover {
+  background-color: #e69500; /* Hover turuncu */
+}
+
+.delete-icon {
+  color: red;
+  cursor: pointer;
+  margin-left: 10px;
+}
