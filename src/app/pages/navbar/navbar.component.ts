@@ -1,13 +1,13 @@
 import { Component, EventEmitter, Output } from '@angular/core';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
-import { interval, of } from 'rxjs';
-import { switchMap } from 'rxjs/operators';
+import { interval, forkJoin, of } from 'rxjs';  // RxJS'den of operatörünü ekliyoruz
+import { switchMap } from 'rxjs/operators';    // RxJS'den switchMap operatörünü ekliyoruz
 
 @Component({
   selector: 'app-navbar',
   standalone: true,
-  imports: [CommonModule, HttpClientModule],  // HttpClientModule'ü imports dizisine ekliyoruz
+  imports: [CommonModule, HttpClientModule],
   templateUrl: './navbar.component.html',
   styleUrls: ['./navbar.component.css']
 })
@@ -19,38 +19,40 @@ export class NavBarComponent {
   constructor(private http: HttpClient) {}
 
   ngOnInit() {
-    // Fetch exchange rates every 30 seconds
-    interval(30000)
-      .pipe(switchMap(() => this.fetchExchangeRates()))
-      .subscribe((rates) => {
-        this.exchangeRates = rates;
-      });
+    // Her 30 saniyede bir güncellemek için interval kullanıyoruz
+    interval(30000).subscribe(() => {
+      this.fetchAllExchangeRates();
+    });
 
-    // Fetch initial exchange rates
-    this.fetchExchangeRates().subscribe((rates) => {
-      this.exchangeRates = rates;
+    // İlk başta hemen kur verilerini çekiyoruz
+    this.fetchAllExchangeRates();
+  }
+
+  // Bütün kurları ayrı ayrı çekmek için forkJoin kullanıyoruz
+  fetchAllExchangeRates() {
+    forkJoin({
+      usdToTry: this.fetchExchangeRate('USD', 'TRY'),
+      eurToTry: this.fetchExchangeRate('EUR', 'TRY'),
+      gbpToTry: this.fetchExchangeRate('GBP', 'TRY'),
+    }).subscribe((rates) => {
+      this.exchangeRates.TRY = rates.usdToTry;
+      this.exchangeRates.EUR = rates.eurToTry;
+      this.exchangeRates.GBP = rates.gbpToTry;
     });
   }
 
-  // Emit search term when input changes
+  // Belirli iki para birimi arasındaki kur değerini çeken fonksiyon
+  fetchExchangeRate(baseCurrency: string, targetCurrency: string) {
+    const apiUrl = `https://api.exchangerate-api.com/v4/latest/${baseCurrency}`;
+    return this.http.get<{ rates: { [key: string]: number } }>(apiUrl).pipe(
+      switchMap((data) => of(data.rates[targetCurrency]))  // switchMap ve of doğru import edildi
+    );
+  }
+
+  // onSearch function to handle the search input
   onSearch(event: Event) {
     const inputElement = event.target as HTMLInputElement;
     const searchTerm = inputElement.value;
-    this.searchTerm.emit(searchTerm);  // Emit the search term to parent
-  }
-
-  // Fetch exchange rates from an external API
-  fetchExchangeRates() {
-    const apiUrl = 'https://api.exchangerate-api.com/v4/latest/USD';  // Use any exchange rate API
-    return this.http.get<any>(apiUrl).pipe(
-      switchMap((data) => {
-        return of({
-          USD: 1,  // 1 USD's value itself
-          TRY: data.rates.TRY,  // Conversion rate for TRY
-          EUR: data.rates.EUR,  // Conversion rate for EUR
-          GBP: data.rates.GBP   // Conversion rate for GBP
-        });
-      })
-    );
+    this.searchTerm.emit(searchTerm);  // Emit the search term to parent component or service
   }
 }
